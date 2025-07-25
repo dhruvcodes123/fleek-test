@@ -1,0 +1,8 @@
+DATABASE_URL=<Database url>
+DATABASE_USERNAME=<Database password>
+DATABASE_PASSWORD=<Database Password>
+DATABASE_HOST=<Database host>
+DATABASE_NAME=<Database name>
+REDIS_URL=<Redis Url, for local or docker>
+REPLICATE_API_TOKEN=<Replicate api access token>
+DUMMY_IMAGE_URL=<Dummy image url>

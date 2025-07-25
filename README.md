@@ -1,1 +1,224 @@
-# fleek-test
+# Async Media Generation Microservice
+
+
+
+## Description
+
+This project is a microservice built with FastAPI that performs asynchronous media generation using the Replicate API (mocked or real). It is designed to demonstrate clean architecture, async workflows, retry mechanisms, and modular design, in alignment with enterprise-grade backend engineering practices.  
+
+
+
+## Tech Stack
+- **Back-end Framework**: FastAPI
+
+- **Database**: SQL MODEL ORM with PostgreSQL.
+
+- **Environment Management**: Pydantic BaseSettings
+
+
+
+## Project Structure
+
+├── app/                            # Application source code
+│   ├── api/                        # API Layer (versioned)
+│   │   └── v1/
+│   │       ├── endpoints.py        # Defines /generate and /status routes
+│   │       
+│   │
+│   ├── core/                       # Core infrastructure configuration
+│   │   ├── config.py               # Load environment variables from .env
+│   │   ├── db.py                   # Async DB session setup
+│   │   ├── logging.py              # App-wide logging config
+│   │   └── celery_app.py           # Celery/Dramatiq configuration
+│   │
+│   ├── schemas/                    # Pydantic request/response models
+│   │   └── job.py
+│   │
+│   ├── models/                     # Database models (SQLModel)
+│   │   └── job_model.py
+│   │
+│   ├── services/                   # Business logic layer
+│   │   └── job_service.py
+│   │
+│   ├── tasks/                      # Background job workers
+│   │   └── generate_task.py        # Celery task definitions
+│   │
+│   ├── storage/                    # Media/file storage abstraction
+│   │   └── media_storage.py
+│   │
+│   └── main.py                     # FastAPI app entry point
+│
+├── generated_images/              # Stores generated image files
+├── alembic/                       # Alembic migration directory
+├── .env                           # Environment variables (local)
+├── .sample-env                   # Template for .env
+├── Dockerfile                     # Docker build config
+├── docker-compose.yml             # Docker Compose setup
+├── requirements.txt               # Python dependencies
+└── README.md                      # Project documentation
+
+
+
+## Architecture overview
+
+![Fleek](/home/root483/Downloads/Fleek.png)
+
+## Tech choices
+
+| Technology             | Why It Was Chosen                                            |
+| ---------------------- | ------------------------------------------------------------ |
+| **FastAPI**            | High-performance web framework with native async support and OpenAPI documentation |
+| **SQLModel**           | Combines Pydantic and SQLAlchemy with full async support, ideal for typed DB models |
+| **Celery**             | Battle-tested distributed task queue supporting retries, scheduling, and scaling |
+| **Redis**              | Fast in-memory store used as the Celery broker               |
+| **Pydantic**           | Ensures strict data validation and schema generation         |
+| **PostgreSQL**         | Reliable, production-ready relational database for job tracking and metadata |
+| **Alembic**            | Robust database migration tool compatible with SQLModel and SQLAlchemy |
+| **Local File Storage** | Simple storage for generated media, ideal for local/dev setup (easily switchable to S3) |
+| **Docker**             | Standardized development environment, enables reproducible builds and deployments |
+
+
+
+## Environment Setup
+
+To run this project locally, you need to create and activate a Python virtual environment and install the required dependencies. Below are setup instructions for **Linux**, **Windows**, and **mac OS** systems.
+
+1. **Clone the repository.**
+
+2. **Create and Activate Virtual Environment.**
+
+   #####  Linux / mac OS
+
+   ```
+   # Create a virtual environment named "venv"
+   python3 -m venv venv
+   
+   # Activate the virtual environment
+   source venv/bin/activate
+   ```
+
+   #####  Windows (CMD)
+
+   ```
+   :: Create virtual environment
+   python -m venv venv
+   
+   :: Activate virtual environment
+   venv\Scripts\activate
+   ```
+
+   
+
+3. **Install Dependencies**
+
+   Once the environment is activated:
+
+   ```
+   pip install -r requirements.txt
+   ```
+
+   
+
+4. ##### Set Up Environment Variables
+
+   Create a `.env` file in the project root directory as instructed in `.sample-env` file in this repository. 
+
+   Example:
+
+   ```
+   DATABASE_URL= <data base url>
+   REPLICATE_API_TOKEN = <replicate api token>
+   ```
+   
+
+
+
+## **Alembic Configuration**
+
+   To handle database schema migrations, this project uses **Alembic** with async SQL Model support.
+
+   #### Running Alembic Migrations
+
+   1. **Initialize Alembic (first time only):**
+
+   ```
+   alembic init alembic
+   ```
+
+2. **Edit `alembic.ini` and `env.py` to use your database URL and async engine. Also, add 'import sqlmodel' in 'script.py.mako' file which is generated by default in alembic folder **.
+
+3. **Create a migration revision:**
+3. **Create a migration revision:**
+
+   ```
+   alembic revision --autogenerate -m "Initial migration"
+   ```
+
+4. **Apply migrations:**
+
+```
+alembic upgrade head
+```
+
+
+
+
+###  Run the Project
+
+After setting up your environment and installing dependencies, follow these steps to start the FastAPI server.
+
+------
+
+####  Start the Application (Locally without Docker)
+
+```
+uvicorn app.main:app --reload
+```
+
+------
+
+####  Run with Docker
+
+If you prefer to run the entire stack using Docker (FastAPI, Redis, PostgreSQL, Celery):
+
+##### 1. Build the containers:
+
+```
+docker compose build
+```
+
+##### 2. Start all services:
+
+```
+docker compose up
+```
+
+This will start:
+
+- `web`: FastAPI server on http://localhost:8000
+- `db`: PostgreSQL database on port `5433`
+- `redis`: Redis message broker
+- `celery_worker`: Background task processor
+
+##### 3. Stop the stack:
+
+```
+docker compose down
+```
+
+
+
+#### Access API Docs
+
+FastAPI provides built-in interactive documentation:
+
+- Swagger UI: http://127.0.0.1:8000/docs
+
+- ReDoc: http://127.0.0.1:8000/redoc
+
+
+
+
+
+
+
