@@ -18,7 +18,7 @@ This project is a microservice built with FastAPI that performs asynchronous med
 
 
 ## Project Structure
-
+```text
 ├── app/                            # Application source code
 │   ├── api/                        # API Layer (versioned)
 │   │   └── v1/
@@ -56,12 +56,13 @@ This project is a microservice built with FastAPI that performs asynchronous med
 ├── docker-compose.yml             # Docker Compose setup
 ├── requirements.txt               # Python dependencies
 └── README.md                      # Project documentation
-
-
+```
 
 ## Architecture overview
 
-![Fleek](/home/root483/Downloads/Fleek.png)
+Please [click here](http://drive.google.com/file/d/18iookNzbNSIeI0mpHsFtfg8g6MwKC4f1/view) to see the Architecture overview
+
+
 
 ## Tech choices
 
